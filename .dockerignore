@@ -1,0 +1,25 @@
+# dependências — serão instaladas no container
+node_modules/
+
+# variáveis de ambiente — nunca entram na imagem
+.env
+.env.*
+
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# git
+.git/
+.gitignore
+
+# logs
+*.log
+
+# testes e docs (não precisam rodar em produção)
+*.test.ts
+*.spec.ts
+README.md
+LICENSE
+
+data/
