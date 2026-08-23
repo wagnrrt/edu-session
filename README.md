@@ -4,6 +4,8 @@
 
 O aluno faz login no notebook com o email institucional e um script silencioso avisa o servidor: *quem*, *qual aparelho*, *quando*. O TI acompanha tudo por um painel web na rede local.
 
+![Screenshot](./assets/screenshot.png)
+
 ## Tecnologias
 
 [![Bun](https://img.shields.io/badge/Bun-303030?logo=bun&logoColor=white&style=for-the-badge)](#)&nbsp;
