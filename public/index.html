@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>edu-session</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <header>
+        <h1>edu-session</h1>
+        <p>registro de logins dos notebooks</p>
+      </header>
+
+      <form id="form-busca">
+        <input type="text" id="input-notebook" placeholder="notebook (NB-23)" />
+        <input type="text" id="input-email" placeholder="email do aluno" />
+        <select id="select-limit">
+          <option value="10">10 / página</option>
+          <option value="20" selected>20 / página</option>
+          <option value="50">50 / página</option>
+          <option value="100">100 / página</option>
+        </select>
+        <button type="submit" class="btn-buscar">Buscar</button>
+        <button type="button" id="btn-limpar" class="btn-fantasma">
+          Limpar
+        </button>
+      </form>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Notebook</th>
+            <th>Email</th>
+            <th>Data/hora</th>
+          </tr>
+        </thead>
+        <tbody id="corpo-tabela"></tbody>
+      </table>
+
+      <p id="msg-vazio" hidden>Nenhum login encontrado.</p>
+
+      <div class="barra-status">
+        <span id="contador"></span>
+      </div>
+
+      <button id="btn-carregar-mais" class="btn-fantasma">
+        Carregar mais ↓
+      </button>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

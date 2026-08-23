@@ -1,0 +1,203 @@
+:root {
+  --bg: #050505;
+  --surface: #0c0c0c;
+  --border: #242424;
+  --border-strong: #3a3a3a;
+  --text: #f5f5f5;
+  --muted: #8a8a8a;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: var(--text);
+  color: var(--bg);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.wrap {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+}
+
+header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: -0.5px;
+}
+
+header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+input,
+select {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--text);
+}
+
+input::placeholder {
+  color: var(--muted);
+}
+
+#input-notebook {
+  flex: 1;
+  min-width: 150px;
+}
+
+#input-email {
+  flex: 1.4;
+  min-width: 180px;
+}
+
+select {
+  cursor: pointer;
+}
+
+select option {
+  background: var(--surface);
+  color: var(--text);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 9px 18px;
+  transition:
+    opacity 0.15s,
+    background 0.15s;
+}
+
+.btn-buscar {
+  background: var(--text);
+  color: var(--bg);
+  border: 1px solid var(--text);
+  font-weight: 600;
+}
+
+.btn-buscar:hover {
+  opacity: 0.85;
+}
+
+.btn-fantasma {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+}
+
+.btn-fantasma:hover {
+  border-color: var(--text);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+thead {
+  background: #111;
+}
+
+th {
+  text-align: left;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background: #131313;
+}
+
+td:nth-child(2) {
+  color: var(--muted);
+}
+
+.barra-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+#contador {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+#btn-carregar-mais {
+  display: none;
+  width: 100%;
+  margin-top: 12px;
+}
+
+#btn-carregar-mais.visivel {
+  display: block;
+}
+
+#msg-vazio {
+  text-align: center;
+  color: var(--muted);
+  padding: 32px 0;
+}
