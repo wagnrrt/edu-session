@@ -26,6 +26,7 @@ function criarCelula(texto) {
 function adicionarLinha(login) {
   const tr = document.createElement("tr")
   tr.appendChild(criarCelula(login.notebook))
+  tr.appendChild(criarCelula(login.name ?? "-"))
   tr.appendChild(criarCelula(login.email))
   tr.appendChild(criarCelula(formatarData(login.received_in)))
   corpoTabela.appendChild(tr)

@@ -3,18 +3,21 @@ import { Database } from "bun:sqlite";
 const db = new Database("data/logins.sqlite")
 db.query(`CREATE TABLE IF NOT EXISTS logins (
           id INTEGER PRIMARY KEY,
+          name TEXT,
           email TEXT,
           notebook TEXT,
           received_in DATE
         )`).run()
 
 type LoginPayload = {
-  email: string;
-  notebook: string;
+  name: string
+  email: string
+  notebook: string
 }
 
 type LoginRow = {
   id: number
+  name: string
   email: string
   notebook: string
   received_in: string
@@ -47,14 +50,17 @@ const server = Bun.serve({
 
     if (url === "/logins" && req.method === "POST") {
       const data = (await req.json()) as LoginPayload
-      if (!data.email || !data.notebook)
-        return new Response(JSON.stringify({ success: false, error: "email and notebook are required fields" }), { status: 400 })
+      if (!data.email || !data.notebook || !data.name)
+        return new Response(JSON.stringify({ success: false, error: "email, name and notebook are required fields" }), { status: 400 })
 
+      if (typeof data.name !== "string")
+        return new Response(JSON.stringify({ success: false, error: "name needs to be text" }), { status: 400 })
       if (typeof data.email !== "string")
         return new Response(JSON.stringify({ success: false, error: "email needs to be text" }), { status: 400 })
       if (typeof data.notebook !== "string")
         return new Response(JSON.stringify({ success: false, error: "notebook needs to be text" }), { status: 400 })
 
+      data.name = data.name.trim()
       data.email = data.email.trim()
       data.notebook = data.notebook.trim()
 
@@ -64,8 +70,8 @@ const server = Bun.serve({
       if (!NOTEBOOK_REGEX.test(data.notebook))
         return new Response(JSON.stringify({ success: false, error: "notebook invalid" }), { status: 400 })
 
-      db.query("INSERT INTO logins (email, notebook, received_in) VALUES (?, ?, ?)").run(
-        data.email, data.notebook, new Date().toISOString())
+      db.query("INSERT INTO logins (name, email, notebook, received_in) VALUES (?, ?, ?, ?)").run(
+        data.name, data.email, data.notebook, new Date().toISOString())
       return new Response(JSON.stringify({ success: true }), { status: 201 })
     }
 
@@ -73,6 +79,12 @@ const server = Bun.serve({
       const url = new URL(req.url)
       const conditions = []
       const values = []
+
+      const name = url.searchParams.get("name")
+      if (name) {
+        conditions.push("name LIKE ?")
+        values.push(`%${name}%`)
+      }
 
       const email = url.searchParams.get("email")
       if (email) {
