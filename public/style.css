@@ -1,10 +1,12 @@
 :root {
-  --bg: #050505;
-  --surface: #0c0c0c;
-  --border: #242424;
-  --border-strong: #3a3a3a;
-  --text: #f5f5f5;
-  --muted: #8a8a8a;
+  --bg: #0a0a0a;
+  --card: #171717;
+  --card-hover: #262626;
+  --field: #141414;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text: #fafafa;
+  --muted: #a1a1aa;
 
   color-scheme: dark;
 }
@@ -22,62 +24,68 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family:
-    ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
-  font-size: 14px;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas,
+    monospace;
+  font-size: 13.5px;
   line-height: 1.6;
+  min-height: 100vh;
 }
 
 .wrap {
-  max-width: 780px;
+  max-width: 1120px;
   margin: 0 auto;
-  padding: 40px 20px 60px;
+  padding: 48px 24px 64px;
 }
 
 header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 16px;
-  margin-bottom: 24px;
+  gap: 16px;
+  margin-bottom: 28px;
 }
 
 h1 {
   margin: 0;
   font-size: 22px;
-  letter-spacing: -0.5px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 header p {
   margin: 0;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 12.5px;
 }
 
 form {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
 input,
 select {
-  background: var(--surface);
+  background: transparent;
   color: var(--text);
   border: 1px solid var(--border-strong);
-  border-radius: 6px;
-  padding: 9px 12px;
+  padding: 6px 12px;
   font: inherit;
+  font-size: 13px;
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, background 0.15s;
 }
 
-input:focus,
-select:focus {
-  border-color: var(--text);
+input:hover,
+select:hover {
+  background: var(--card);
+}
+
+input:focus-visible,
+select:focus-visible {
+  border-color: rgba(255, 255, 255, 0.35);
+  background: var(--card);
 }
 
 input::placeholder {
@@ -86,12 +94,12 @@ input::placeholder {
 
 #input-notebook {
   flex: 1;
-  min-width: 150px;
+  min-width: 140px;
 }
 
 #input-email {
-  flex: 1.4;
-  min-width: 180px;
+  flex: 1.5;
+  min-width: 190px;
 }
 
 select {
@@ -99,29 +107,31 @@ select {
 }
 
 select option {
-  background: var(--surface);
+  background: var(--card);
   color: var(--text);
 }
 
 button {
   font: inherit;
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
-  border-radius: 6px;
-  padding: 9px 18px;
-  transition:
-    opacity 0.15s,
-    background 0.15s;
+  padding: 6px 16px;
+  transition: filter 0.15s, border-color 0.15s, background 0.15s, transform 0.05s;
+}
+
+button:active {
+  transform: translateY(1px);
 }
 
 .btn-buscar {
-  background: var(--text);
-  color: var(--bg);
-  border: 1px solid var(--text);
-  font-weight: 600;
+  background: #e5e5e5;
+  color: #171717;
+  border: 1px solid #e5e5e5;
 }
 
 .btn-buscar:hover {
-  opacity: 0.85;
+  filter: brightness(0.85);
 }
 
 .btn-fantasma {
@@ -131,35 +141,32 @@ button {
 }
 
 .btn-fantasma:hover {
-  border-color: var(--text);
+  background: var(--card-hover);
 }
 
 table {
   width: 100%;
-  border-collapse: collapse;
-  background: var(--surface);
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
 }
 
-thead {
-  background: #111;
-}
-
-th {
+thead th {
   text-align: left;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 10px 14px;
+  letter-spacing: 0.05em;
+  padding: 13px 20px;
   border-bottom: 1px solid var(--border);
 }
 
 td {
-  padding: 10px 14px;
+  padding: 11px 20px;
   border-bottom: 1px solid var(--border);
+  font-size: 13px;
 }
 
 tbody tr:last-child td {
@@ -167,10 +174,15 @@ tbody tr:last-child td {
 }
 
 tbody tr:hover {
-  background: #131313;
+  background: var(--card-hover);
 }
 
-td:nth-child(2) {
+td:first-child {
+  font-weight: 700;
+}
+
+td:nth-child(3),
+td:nth-child(4) {
   color: var(--muted);
 }
 
@@ -182,6 +194,9 @@ td:nth-child(2) {
 }
 
 #contador {
+  display: inline-block;
+  border: 1px solid var(--border);
+  padding: 4px 12px;
   color: var(--muted);
   font-size: 12px;
 }
@@ -190,6 +205,7 @@ td:nth-child(2) {
   display: none;
   width: 100%;
   margin-top: 12px;
+  padding: 10px;
 }
 
 #btn-carregar-mais.visivel {
@@ -199,5 +215,5 @@ td:nth-child(2) {
 #msg-vazio {
   text-align: center;
   color: var(--muted);
-  padding: 32px 0;
+  padding: 44px 0;
 }
