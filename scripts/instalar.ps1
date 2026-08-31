@@ -6,8 +6,8 @@
 #   1. Pergunta o numero do notebook e batiza a maquina (NB-00/CB-00)
 #   2. Copia o logon.ps1 para pasta protegida (aluno nao mexe)
 #     ja preenchendo o IP do servidor
-#   3. Registra tarefa agendada que roda no contexto do usuario
-#      a cada logon, sem janela, funciona na bateria
+#   3. Registra chave Run no HKLM: a cada logon, o Windows lanca o
+#      launcher invisivel no contexto do usuario que entrou
 #
 # Requisitos: logon.ps1 na mesma pasta deste arquivo.
 # ============================================================
@@ -37,7 +37,6 @@ if ($numero -notmatch '^(NB|CB)-\d{2}$') {
 
 $pastaDestino = "C:\Program Files\edu-session"
 $arquivoLogon = Join-Path $pastaDestino "logon.ps1"
-$nomeTarefa   = "EduSessionLogon"
 
 # ------------------------------------------------------------
 # teste rapido de alcance do servidor (nao bloqueia se falhar)
@@ -68,7 +67,7 @@ else {
 }
 
 # ------------------------------------------------------------
-# 2. copiar logon.ps1 para pasta protegida, com o IP certo
+# 2. copiar logon.ps1 e launcher.vbs p/ pasta protegida, com o IP certo
 # ------------------------------------------------------------
 try {
     New-Item -ItemType Directory -Path $pastaDestino -Force -ErrorAction Stop | Out-Null
@@ -76,6 +75,9 @@ try {
     $origem   = Join-Path $PSScriptRoot "logon.ps1"
     $conteudo = (Get-Content $origem -Raw) -replace 'COLOQUE_O_IP_AQUI', $ipServidor
     Set-Content -Path $arquivoLogon -Value $conteudo -Encoding UTF8 -ErrorAction Stop
+
+    Copy-Item (Join-Path $PSScriptRoot "launcher.vbs") `
+              (Join-Path $pastaDestino "launcher.vbs") -Force -ErrorAction Stop
 
     Write-Host "$tag script de logon instalado em '$arquivoLogon'" -ForegroundColor Green
 }
@@ -86,42 +88,29 @@ catch {
 }
 
 # ------------------------------------------------------------
-# 3. tarefa agendada: roda a cada logon, como SYSTEM, oculta
+# 3. chave Run no HKLM: dispara o launcher a cada logon
 # ------------------------------------------------------------
-$acao = New-ScheduledTaskAction `
-            -Execute "powershell.exe" `
-            -Argument "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$arquivoLogon`""
-
-$gatilho = New-ScheduledTaskTrigger -AtLogOn
-
-$config = New-ScheduledTaskSettingsSet `
-            -AllowStartIfOnBatteries `
-            -DontStopIfGoingOnBatteries `
-            -ExecutionTimeLimit (New-TimeSpan -Minutes 2) `
-            -MultipleInstances IgnoreNew
-
-# Roda no CONTEXTO do usuario que acabou de logar.
-# Usa o SID universal do grupo "Usuarios" (S-1-5-32-545) porque
-# o NOME do grupo muda conforme o idioma do Windows ("BUILTIN\Users"
-# nao existe num Windows pt-BR); o SID vale em qualquer lingua.
-$principal = New-ScheduledTaskPrincipal -GroupId "S-1-5-32-545" -RunLevel Limited
+# Por que Run key e nao tarefa agendada? Tarefas com principal de
+# grupo falham em disparar para contas AzureAD em algumas maquinas.
+# A chave Run dispara para QUALQUER usuario que logar, roda no
+# contexto dele e so pode ser editada por administrador (HKLM).
+$chaveRun = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+$valorEdu = 'wscript.exe "C:\Program Files\edu-session\launcher.vbs"'
 
 try {
-    # -ErrorAction Stop converte erro non-terminating em terminating,
-    # garantindo que falha aqui CAIA NO CATCH em vez de passar reto.
-    Register-ScheduledTask `
-        -TaskName $nomeTarefa `
-        -Action $acao `
-        -Trigger $gatilho `
-        -Settings $config `
-        -Principal $principal `
-        -Force `
-        -ErrorAction Stop | Out-Null
+    # limpa instalacoes antigas baseadas em tarefa agendada, se existirem
+    Unregister-ScheduledTask -TaskName "EduSessionLogon" -Confirm:$false -ErrorAction SilentlyContinue
 
-    Write-Host "$tag tarefa '$nomeTarefa' registrada (ao logar, no contexto do usuario)" -ForegroundColor Green
+    New-ItemProperty -Path $chaveRun `
+        -Name "EduSession" `
+        -Value $valorEdu `
+        -PropertyType String `
+        -Force -ErrorAction Stop | Out-Null
+
+    Write-Host "$tag registro de logon gravado (roda a cada logon, invisivel)" -ForegroundColor Green
 }
 catch {
-    Write-Host "$tag falhou ao registrar a tarefa: $_" -ForegroundColor Red
+    Write-Host "$tag falhou ao gravar a chave de logon: $_" -ForegroundColor Red
     exit 1
 }
 
